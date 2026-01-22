@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Referencias | Tech Shop</title>
+
+<style>
+  body{margin:0;font-family:Arial,system-ui;background:#0b1220;color:#e9f0ff}
+  .wrap{max-width:900px;margin:auto;padding:20px}
+  header{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;
+    border:1px solid #2a3555;padding:16px;border-radius:12px;background:#0f1a33
+  }
+  .btn{
+    background:#4ea1ff;color:#000;padding:8px 12px;border-radius:8px;
+    text-decoration:none;font-weight:bold;display:inline-block
+  }
+  .card{
+    margin-top:16px;border:1px solid #2a3555;background:#0f1a33;
+    padding:16px;border-radius:12px
+  }
+  .ref{border-bottom:1px solid #2a3555;padding:12px 0}
+  .ref:last-child{border-bottom:none}
+  .name{font-weight:bold}
+  footer{margin-top:12px;font-size:12px;color:#a9b7d0}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+<header>
+  <div>
+    <strong>Referencias de clientes</strong><br>
+    <span style="font-size:13px;color:#a9b7d0">Tech Shop</span>
+  </div>
+  <div>
+    <span id="count">Cargando…</span>
+    <a class="btn" id="formBtn" target="_blank" rel="noopener">Dejar referencia</a>
+  </div>
+</header>
+
+<section class="card">
+  <div id="list"></div>
+  <footer>
+    Tienda: <a href="https://mundo-digital.biznecubano.com" target="_blank" rel="noopener" style="color:#e9f0ff">mundo-digital.biznecubano.com</a>
+    <br>
+    WhatsApp Business: <strong>+53 54842473</strong>
+  </footer>
+</section>
+
+</div>
+
+<script>
+/* ===== CONFIG (YA LISTA) ===== */
+const FORM_URL =
+  "https://docs.google.com/forms/d/e/1FAIpQLSea9XMyX6rm2RViQU6Pzf2fQQUSy-nIkE9wJ4LLKsURLvjXYg/viewform";
+
+const SHEET_CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQE24Fh2LzBlwMfpGEjfb84UFIW6DLTZVJojcqqmsX-FOLEX5nrXwCs5v988UHvFsilh4wNrx-A1EXS/pub?gid=354968205&single=true&output=csv";
+
+document.getElementById("formBtn").href = FORM_URL;
+
+const list = document.getElementById("list");
+const count = document.getElementById("count");
+
+function esc(s){
+  return String(s||"")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;");
+}
+
+function parseCSV(t){
+  const rows=[], r=[]; let c="", q=false;
+  for(let i=0;i<t.length;i++){
+    const ch=t[i], nx=t[i+1];
+    if(ch === '"' && q && nx === '"'){ c+='"'; i++; continue; }
+    if(ch === '"'){ q=!q; continue; }
+    if(ch === ',' && !q){ r.push(c); c=""; continue; }
+    if((ch === '\n' || ch === '\r') && !q){
+      if(ch === '\r' && nx === '\n') i++;
+      r.push(c); rows.push([...r]); r.length=0; c=""; continue;
+    }
+    c += ch;
+  }
+  r.push(c); rows.push([...r]); return rows;
+}
+
+async function load(){
+  try{
+    const res = await fetch(SHEET_CSV_URL, { cache:"no-store" });
+    if(!res.ok) throw new Error("No se pudo cargar CSV");
+
+    const csv = await res.text();
+    const m = parseCSV(csv);
+    if(!m.length || !m[0].length){
+      count.textContent = "Sin datos";
+      list.innerHTML = "<div class='ref'>Aún no hay referencias.</div>";
+      return;
+    }
+
+    const h = (m[0]||[]).map(x=>String(x||"").toLowerCase().trim());
+
+    // Soporta encabezados típicos: "Nombre", "Referencia", "Aprobado"
+    const iName = h.indexOf("nombre");
+    const iText = h.indexOf("referencia");
+    const iOk   = h.indexOf("aprobado");
+
+    if(iName < 0 || iText < 0){
+      count.textContent = "Revisar columnas";
+      list.innerHTML =
+        "<div class='ref'>Tu Sheet debe tener columnas: <b>Nombre</b> y <b>Referencia</b> (y opcional <b>Aprobado</b>).</div>";
+      return;
+    }
+
+    const hasApproval = iOk >= 0;
+
+    const items = m.slice(1).map(r=>({
+      name: (r[iName] || "Cliente").trim(),
+      text: (r[iText] || "").trim(),
+      ok: hasApproval ? String(r[iOk]||"").trim().toUpperCase() : "SI"
+    }))
+    .filter(x => x.text && x.ok === "SI");
+
+    count.textContent = items.length + " referencias";
+
+    list.innerHTML = items.length
+      ? items.map(x=>`
+          <div class="ref">
+            <div class="name">${esc(x.name)}</div>
+            <div>${esc(x.text)}</div>
+          </div>
+        `).join("")
+      : "<div class='ref'>Aún no hay referencias aprobadas.</div>";
+
+  }catch(e){
+    count.textContent = "Error";
+    list.innerHTML =
+      "<div class='ref'>No se pudo cargar el Sheet. Verifica que esté publicado y accesible públicamente.</div>";
+  }
+}
+
+load();
+</script>
+</body>
+</html>
