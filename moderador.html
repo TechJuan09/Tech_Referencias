@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Moderador Tech Shop</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAvJr3Hg7Rzzur23ZIVMbuim8lkTxEUV10",
+  authDomain: "tech-shop-c72f4.firebaseapp.com",
+  projectId: "tech-shop-c72f4"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+const p = new URLSearchParams(location.search);
+const id = p.get("id");
+const action = p.get("a");
+
+async function run(){
+  if(!id || !action){
+    document.body.innerHTML="⚠️ Enlace inválido";
+    return;
+  }
+
+  if(action==="ok"){
+    await db.collection("referencias").doc(id).update({estado:"aprobado"});
+    document.body.innerHTML="✅ Referencia aprobada correctamente";
+  }
+
+  if(action==="del"){
+    await db.collection("referencias").doc(id).delete();
+    document.body.innerHTML="❌ Referencia eliminada";
+  }
+}
+run();
+</script>
+</head>
+<body style="font-family:Arial;text-align:center;padding-top:40px;background:#0b1220;color:white">
+Procesando...
+</body>
+</html>
+
