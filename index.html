@@ -218,7 +218,8 @@ window.FB_READY = true;
     <span class="pill"><span class="dot"></span>Disponible 24/7</span>
     <span class="pill" id="countPill">Cargando…</span>
     <button class="btn" id="openFormBtn" type="button">Dejar referencia</button>
-    <button class="btn secondary" id="openAdminBtn" type="button">Admin (Aprobar)</button>
+<a class="btn secondary" href="https://tienda-tech-shop.vercel.app" target="_blank">🛒 Ir a la Tienda</a>
+    <button class="btn secondary" style="display:none" id="openAdminBtn" type="button">Admin (Aprobar)</button>
   </div>
 </header>
 
@@ -357,7 +358,25 @@ WhatsApp Business: <strong>+53 54842473</strong>
     { _id:"a9", nombre:"Lucia", texto:"Excelente servicio, muy confiable. Gracias.", estrellas:5, fecha: Date.now()-1000*60*60*24*11, estado:"aprobado" },
     { _id:"a10", nombre:"Zekke", texto:"Servicio confiable. Agradecido con la atención del admin. Gracias.", estrellas:5, fecha: Date.now()-1000*60*60*24*10, estado:"aprobado" },
     { _id:"a11", nombre:"Fra Fra", texto:"Muy buen servicio, rápido. Lo recomiendo.", estrellas:5, fecha: Date.now()-1000*60*60*24*9, estado:"aprobado" },
-  ];
+  { _id:"a432", nombre:"Sr. Williams", texto:"Buen trabajo, súper rápido.", estrellas:5, fecha: Date.now()-1000*60*60*24*27, estado:"aprobado" },
+{ _id:"a489", nombre:"Cliente", texto:"Muy buen servicio, lo recomiendo.", estrellas:5, fecha: Date.now()-1000*60*60*24*14, estado:"aprobado" },
+{ _id:"a762", nombre:"Yanoi", texto:"Todo perfecto con Tech Shop. Excelente.", estrellas:5, fecha: Date.now()-1000*60*60*24*26, estado:"aprobado" },
+{ _id:"a311", nombre:"L3³∅ Rød®|¢£¢§", texto:"Excelente servicio. Gracias, ya tengo mi propio número. Bendiciones para ti y tu familia.", estrellas:5, fecha: Date.now()-1000*60*60*24*38, estado:"aprobado" },
+{ _id:"a375", nombre:"Reyna", texto:"Súper la atención, muy buena.", estrellas:5, fecha: Date.now()-1000*60*60*24*11, estado:"aprobado" },
+{ _id:"a956", nombre:"Eduareh SpaceHunters Kat Knight", texto:"Excelente servicio. Excelentes ofertas. 5/5.", estrellas:5, fecha: Date.now()-1000*60*60*24*32, estado:"aprobado" },
+{ _id:"a629", nombre:"Javier Ojeda", texto:"Muchas gracias, ya tengo mi número para Telegram.", estrellas:5, fecha: Date.now()-1000*60*60*24*26, estado:"aprobado" },
+{ _id:"a545", nombre:"Yoendry", texto:"Súper confiable con los números virtuales.", estrellas:5, fecha: Date.now()-1000*60*60*24*9, estado:"aprobado" },
+{ _id:"a309", nombre:"Ihosva", texto:"Es un placer adquirir servicios con Tech Shop: rápido y seguro.", estrellas:5, fecha: Date.now()-1000*60*60*24*25, estado:"aprobado" },
+{ _id:"a414", nombre:"Carlos Manuel Portales Chacón", texto:"Total seguridad y confianza.", estrellas:5, fecha: Date.now()-1000*60*60*24*26, estado:"aprobado" },
+{ _id:"a795", nombre:"Yoendry", texto:"Excelente servicio, súper serio.", estrellas:5, fecha: Date.now()-1000*60*60*24*36, estado:"aprobado" },
+{ _id:"a711", nombre:"Cliente", texto:"Excelente servicio, mucha seguridad y confianza.", estrellas:5, fecha: Date.now()-1000*60*60*24*17, estado:"aprobado" },
+{ _id:"a209", nombre:"Cliente", texto:"Segundo trabajo y como siempre excelente. Lo mejor.", estrellas:5, fecha: Date.now()-1000*60*60*24*14, estado:"aprobado" },
+{ _id:"a227", nombre:"MR", texto:"Muy complacido con la atención. Gracias, pude conseguir mi número virtual. Servicio de excelencia.", estrellas:5, fecha: Date.now()-1000*60*60*24*30, estado:"aprobado" },
+{ _id:"a989", nombre:"Cliente", texto:"Muy buen servicio. Tech Shop brinda el mejor servicio.", estrellas:5, fecha: Date.now()-1000*60*60*24*18, estado:"aprobado" },
+{ _id:"a832", nombre:"Manu", texto:"Muy contento con los servicios: calidad y rapidez aseguradas.", estrellas:5, fecha: Date.now()-1000*60*60*24*19, estado:"aprobado" },
+{ _id:"a570", nombre:"Spotify", texto:"Muy contento con los servicios. Muchas gracias.", estrellas:5, fecha: Date.now()-1000*60*60*24*25, estado:"aprobado" },
+{ _id:"a925", nombre:"Netflix", texto:"Espectacular servicio: calidad y rapidez. Muchas gracias.", estrellas:5, fecha: Date.now()-1000*60*60*24*15, estado:"aprobado" },
+];
 
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? "")
@@ -461,11 +480,49 @@ if (window.FB_READY) {
       const refs=[];
       snap.forEach(d=>refs.push({_id:d.id,...d.data()}));
       if(refs.length){
-        localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(refs));
-        renderPublic();
+        
+// FUSIONAR LOCAL + FIREBASE (sin duplicados)
+let localApproved = JSON.parse(localStorage.getItem("techshop_refs_approved_v3") || "[]");
+
+refs.forEach(fb => {
+  const exists = localApproved.some(l =>
+    l.nombre.trim().toLowerCase() === fb.nombre.trim().toLowerCase() &&
+    l.texto.trim().toLowerCase() === fb.texto.trim().toLowerCase()
+  );
+  if (!exists) localApproved.push(fb);
+});
+
+localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(localApproved));
+renderPublic();
+
+        
+// ADMIN OCULTO (5 toques en logo)
+let taps=0;
+document.querySelector(".logo-glass").addEventListener("click",()=>{
+  taps++;
+  if(taps>=5){
+    document.getElementById("adminModal").classList.add("open");
+    taps=0;
+  }
+  setTimeout(()=>taps=0,1500);
+});
+
+renderPublic();
       }
     });
 }
+
+// ADMIN OCULTO (5 toques en logo)
+let taps=0;
+document.querySelector(".logo-glass").addEventListener("click",()=>{
+  taps++;
+  if(taps>=5){
+    document.getElementById("adminModal").classList.add("open");
+    taps=0;
+  }
+  setTimeout(()=>taps=0,1500);
+});
+
 renderPublic();
   }
 
@@ -487,11 +544,49 @@ if (window.FB_READY) {
       const refs=[];
       snap.forEach(d=>refs.push({_id:d.id,...d.data()}));
       if(refs.length){
-        localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(refs));
-        renderPublic();
+        
+// FUSIONAR LOCAL + FIREBASE (sin duplicados)
+let localApproved = JSON.parse(localStorage.getItem("techshop_refs_approved_v3") || "[]");
+
+refs.forEach(fb => {
+  const exists = localApproved.some(l =>
+    l.nombre.trim().toLowerCase() === fb.nombre.trim().toLowerCase() &&
+    l.texto.trim().toLowerCase() === fb.texto.trim().toLowerCase()
+  );
+  if (!exists) localApproved.push(fb);
+});
+
+localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(localApproved));
+renderPublic();
+
+        
+// ADMIN OCULTO (5 toques en logo)
+let taps=0;
+document.querySelector(".logo-glass").addEventListener("click",()=>{
+  taps++;
+  if(taps>=5){
+    document.getElementById("adminModal").classList.add("open");
+    taps=0;
+  }
+  setTimeout(()=>taps=0,1500);
+});
+
+renderPublic();
       }
     });
 }
+
+// ADMIN OCULTO (5 toques en logo)
+let taps=0;
+document.querySelector(".logo-glass").addEventListener("click",()=>{
+  taps++;
+  if(taps>=5){
+    document.getElementById("adminModal").classList.add("open");
+    taps=0;
+  }
+  setTimeout(()=>taps=0,1500);
+});
+
 renderPublic();
   }
 
@@ -517,11 +612,49 @@ if (window.FB_READY) {
       const refs=[];
       snap.forEach(d=>refs.push({_id:d.id,...d.data()}));
       if(refs.length){
-        localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(refs));
-        renderPublic();
+        
+// FUSIONAR LOCAL + FIREBASE (sin duplicados)
+let localApproved = JSON.parse(localStorage.getItem("techshop_refs_approved_v3") || "[]");
+
+refs.forEach(fb => {
+  const exists = localApproved.some(l =>
+    l.nombre.trim().toLowerCase() === fb.nombre.trim().toLowerCase() &&
+    l.texto.trim().toLowerCase() === fb.texto.trim().toLowerCase()
+  );
+  if (!exists) localApproved.push(fb);
+});
+
+localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(localApproved));
+renderPublic();
+
+        
+// ADMIN OCULTO (5 toques en logo)
+let taps=0;
+document.querySelector(".logo-glass").addEventListener("click",()=>{
+  taps++;
+  if(taps>=5){
+    document.getElementById("adminModal").classList.add("open");
+    taps=0;
+  }
+  setTimeout(()=>taps=0,1500);
+});
+
+renderPublic();
       }
     });
 }
+
+// ADMIN OCULTO (5 toques en logo)
+let taps=0;
+document.querySelector(".logo-glass").addEventListener("click",()=>{
+  taps++;
+  if(taps>=5){
+    document.getElementById("adminModal").classList.add("open");
+    taps=0;
+  }
+  setTimeout(()=>taps=0,1500);
+});
+
 renderPublic(); });
     $("moreBtn").addEventListener("click", ()=>{ visible+=10; /* FIREBASE LOAD */
 if (window.FB_READY) {
@@ -531,13 +664,96 @@ if (window.FB_READY) {
       const refs=[];
       snap.forEach(d=>refs.push({_id:d.id,...d.data()}));
       if(refs.length){
-        localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(refs));
-        renderPublic();
+        
+// FUSIONAR LOCAL + FIREBASE (sin duplicados)
+let localApproved = JSON.parse(localStorage.getItem("techshop_refs_approved_v3") || "[]");
+
+refs.forEach(fb => {
+  const exists = localApproved.some(l =>
+    l.nombre.trim().toLowerCase() === fb.nombre.trim().toLowerCase() &&
+    l.texto.trim().toLowerCase() === fb.texto.trim().toLowerCase()
+  );
+  if (!exists) localApproved.push(fb);
+});
+
+localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(localApproved));
+renderPublic();
+
+        
+// ADMIN OCULTO (5 toques en logo)
+let taps=0;
+document.querySelector(".logo-glass").addEventListener("click",()=>{
+  taps++;
+  if(taps>=5){
+    document.getElementById("adminModal").classList.add("open");
+    taps=0;
+  }
+  setTimeout(()=>taps=0,1500);
+});
+
+renderPublic();
       }
     });
 }
+
+// ADMIN OCULTO (5 toques en logo)
+let taps=0;
+document.querySelector(".logo-glass").addEventListener("click",()=>{
+  taps++;
+  if(taps>=5){
+    document.getElementById("adminModal").classList.add("open");
+    taps=0;
+  }
+  setTimeout(()=>taps=0,1500);
+});
+
 renderPublic(); });
-    $("refreshBtn").addEventListener("click", ()=>{ ensureSeed(); visible=10; /* FIREBASE LOAD */
+    $("refreshBtn").addEventListener("click", ()=>{ 
+// REFERENCIAS INICIALES PENDIENTES
+const SEED_PENDING = [
+{ _id:"p8812", nombre:"Ivan", texto:"Rapidez, calidad, seriedad, profesionalidad y sobre todo confiabilidad en el servicio que prestan.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p5209", nombre:"Liset", texto:"Muy buen servicio, confiable y rápido, muy recomendado.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p4200", nombre:"Arián", texto:"Súper el servicio de Tech Shop.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p7388", nombre:"Victor", texto:"Un servicio confiable.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p1939", nombre:"Daylin", texto:"Gracias por su servicio, muy atento a la hora de atender sus clientes. Un placer trabajar con usted.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p8377", nombre:"Cliente", texto:"Muy contenta con los servicios. Llevo años y nunca he tenido problemas. Muchas gracias.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p7701", nombre:"Nestor Pérez A", texto:"Muchísimas gracias por el servicio. Continúa así; serás un gran emprendedor.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p8244", nombre:"Cliente", texto:"Excelente servicio. Súper rápido, confiable. Recomendado.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p3808", nombre:"Carlos", texto:"Excelente servicio y rápido.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p5492", nombre:"Lucia", texto:"Excelente servicio, muy confiable. Gracias.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p1701", nombre:"Zekke", texto:"Servicio confiable. Agradecido con la atención del admin. Gracias.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p3350", nombre:"Fra Fra", texto:"Muy buen servicio, rápido. Lo recomiendo.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p2079", nombre:"Sr. Williams", texto:"Buen trabajo, súper rápido.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p4930", nombre:"Cliente", texto:"Muy buen servicio, lo recomiendo.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p2888", nombre:"Yanoi", texto:"Todo perfecto con Tech Shop. Excelente.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p5929", nombre:"L3³∅ Rød®|¢£¢§", texto:"Excelente servicio. Gracias, ya tengo mi propio número. Bendiciones para ti y tu familia.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p4342", nombre:"Reyna", texto:"Súper la atención, muy buena.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p9727", nombre:"Eduareh SpaceHunters Kat Knight", texto:"Excelente servicio. Excelentes ofertas. 5/5.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p1612", nombre:"Javier Ojeda", texto:"Muchas gracias, ya tengo mi número para Telegram.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p2257", nombre:"Yoendry", texto:"Súper confiable con los números virtuales.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p7788", nombre:"Ihosva", texto:"Es un placer adquirir servicios con Tech Shop: rápido y seguro.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p1922", nombre:"Carlos Manuel Portales Chacón", texto:"Total seguridad y confianza.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p4362", nombre:"Yoendry", texto:"Excelente servicio, súper serio.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p3477", nombre:"Cliente", texto:"Excelente servicio, mucha seguridad y confianza.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p9656", nombre:"Cliente", texto:"Segundo trabajo y como siempre excelente. Lo mejor.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p1228", nombre:"MR", texto:"Muy complacido con la atención. Gracias, pude conseguir mi número virtual. Servicio de excelencia.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p1811", nombre:"Cliente", texto:"Muy buen servicio. Tech Shop brinda el mejor servicio.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p9827", nombre:"Manu", texto:"Muy contento con los servicios: calidad y rapidez aseguradas.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p7756", nombre:"Spotify", texto:"Muy contento con los servicios. Muchas gracias.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p9555", nombre:"Netflix", texto:"Espectacular servicio: calidad y rapidez. Muchas gracias.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+
+];
+
+// Inyectar pendientes iniciales si no existen
+function seedPendingIfEmpty(){
+  const p = JSON.parse(localStorage.getItem("techshop_refs_pending_v3") || "[]");
+  if(p.length === 0){
+    localStorage.setItem("techshop_refs_pending_v3", JSON.stringify(SEED_PENDING));
+  }
+}
+
+ensureSeed();
+seedPendingIfEmpty(); visible=10; /* FIREBASE LOAD */
 if (window.FB_READY) {
   db.collection("referencias")
     .where("estado","==","aprobado")
@@ -545,11 +761,49 @@ if (window.FB_READY) {
       const refs=[];
       snap.forEach(d=>refs.push({_id:d.id,...d.data()}));
       if(refs.length){
-        localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(refs));
-        renderPublic();
+        
+// FUSIONAR LOCAL + FIREBASE (sin duplicados)
+let localApproved = JSON.parse(localStorage.getItem("techshop_refs_approved_v3") || "[]");
+
+refs.forEach(fb => {
+  const exists = localApproved.some(l =>
+    l.nombre.trim().toLowerCase() === fb.nombre.trim().toLowerCase() &&
+    l.texto.trim().toLowerCase() === fb.texto.trim().toLowerCase()
+  );
+  if (!exists) localApproved.push(fb);
+});
+
+localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(localApproved));
+renderPublic();
+
+        
+// ADMIN OCULTO (5 toques en logo)
+let taps=0;
+document.querySelector(".logo-glass").addEventListener("click",()=>{
+  taps++;
+  if(taps>=5){
+    document.getElementById("adminModal").classList.add("open");
+    taps=0;
+  }
+  setTimeout(()=>taps=0,1500);
+});
+
+renderPublic();
       }
     });
 }
+
+// ADMIN OCULTO (5 toques en logo)
+let taps=0;
+document.querySelector(".logo-glass").addEventListener("click",()=>{
+  taps++;
+  if(taps>=5){
+    document.getElementById("adminModal").classList.add("open");
+    taps=0;
+  }
+  setTimeout(()=>taps=0,1500);
+});
+
 renderPublic(); toast("Actualizado"); });
 
     $("unlockBtn").addEventListener("click", ()=>{
@@ -626,11 +880,49 @@ if (window.FB_READY) {
       const refs=[];
       snap.forEach(d=>refs.push({_id:d.id,...d.data()}));
       if(refs.length){
-        localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(refs));
-        renderPublic();
+        
+// FUSIONAR LOCAL + FIREBASE (sin duplicados)
+let localApproved = JSON.parse(localStorage.getItem("techshop_refs_approved_v3") || "[]");
+
+refs.forEach(fb => {
+  const exists = localApproved.some(l =>
+    l.nombre.trim().toLowerCase() === fb.nombre.trim().toLowerCase() &&
+    l.texto.trim().toLowerCase() === fb.texto.trim().toLowerCase()
+  );
+  if (!exists) localApproved.push(fb);
+});
+
+localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(localApproved));
+renderPublic();
+
+        
+// ADMIN OCULTO (5 toques en logo)
+let taps=0;
+document.querySelector(".logo-glass").addEventListener("click",()=>{
+  taps++;
+  if(taps>=5){
+    document.getElementById("adminModal").classList.add("open");
+    taps=0;
+  }
+  setTimeout(()=>taps=0,1500);
+});
+
+renderPublic();
       }
     });
 }
+
+// ADMIN OCULTO (5 toques en logo)
+let taps=0;
+document.querySelector(".logo-glass").addEventListener("click",()=>{
+  taps++;
+  if(taps>=5){
+    document.getElementById("adminModal").classList.add("open");
+    taps=0;
+  }
+  setTimeout(()=>taps=0,1500);
+});
+
 renderPublic();
         }catch{ toast("JSON inválido"); }
       };
@@ -650,11 +942,49 @@ if (window.FB_READY) {
       const refs=[];
       snap.forEach(d=>refs.push({_id:d.id,...d.data()}));
       if(refs.length){
-        localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(refs));
-        renderPublic();
+        
+// FUSIONAR LOCAL + FIREBASE (sin duplicados)
+let localApproved = JSON.parse(localStorage.getItem("techshop_refs_approved_v3") || "[]");
+
+refs.forEach(fb => {
+  const exists = localApproved.some(l =>
+    l.nombre.trim().toLowerCase() === fb.nombre.trim().toLowerCase() &&
+    l.texto.trim().toLowerCase() === fb.texto.trim().toLowerCase()
+  );
+  if (!exists) localApproved.push(fb);
+});
+
+localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(localApproved));
+renderPublic();
+
+        
+// ADMIN OCULTO (5 toques en logo)
+let taps=0;
+document.querySelector(".logo-glass").addEventListener("click",()=>{
+  taps++;
+  if(taps>=5){
+    document.getElementById("adminModal").classList.add("open");
+    taps=0;
+  }
+  setTimeout(()=>taps=0,1500);
+});
+
+renderPublic();
       }
     });
 }
+
+// ADMIN OCULTO (5 toques en logo)
+let taps=0;
+document.querySelector(".logo-glass").addEventListener("click",()=>{
+  taps++;
+  if(taps>=5){
+    document.getElementById("adminModal").classList.add("open");
+    taps=0;
+  }
+  setTimeout(()=>taps=0,1500);
+});
+
 renderPublic();
     });
 
@@ -668,11 +998,49 @@ if (window.FB_READY) {
       const refs=[];
       snap.forEach(d=>refs.push({_id:d.id,...d.data()}));
       if(refs.length){
-        localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(refs));
-        renderPublic();
+        
+// FUSIONAR LOCAL + FIREBASE (sin duplicados)
+let localApproved = JSON.parse(localStorage.getItem("techshop_refs_approved_v3") || "[]");
+
+refs.forEach(fb => {
+  const exists = localApproved.some(l =>
+    l.nombre.trim().toLowerCase() === fb.nombre.trim().toLowerCase() &&
+    l.texto.trim().toLowerCase() === fb.texto.trim().toLowerCase()
+  );
+  if (!exists) localApproved.push(fb);
+});
+
+localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(localApproved));
+renderPublic();
+
+        
+// ADMIN OCULTO (5 toques en logo)
+let taps=0;
+document.querySelector(".logo-glass").addEventListener("click",()=>{
+  taps++;
+  if(taps>=5){
+    document.getElementById("adminModal").classList.add("open");
+    taps=0;
+  }
+  setTimeout(()=>taps=0,1500);
+});
+
+renderPublic();
       }
     });
 }
+
+// ADMIN OCULTO (5 toques en logo)
+let taps=0;
+document.querySelector(".logo-glass").addEventListener("click",()=>{
+  taps++;
+  if(taps>=5){
+    document.getElementById("adminModal").classList.add("open");
+    taps=0;
+  }
+  setTimeout(()=>taps=0,1500);
+});
+
 renderPublic();
         if($("adminModal").classList.contains("open")) renderAdmin();
       }
@@ -699,7 +1067,52 @@ renderPublic();
     };
   }
 
-  ensureSeed();
+  
+// REFERENCIAS INICIALES PENDIENTES
+const SEED_PENDING = [
+{ _id:"p8812", nombre:"Ivan", texto:"Rapidez, calidad, seriedad, profesionalidad y sobre todo confiabilidad en el servicio que prestan.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p5209", nombre:"Liset", texto:"Muy buen servicio, confiable y rápido, muy recomendado.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p4200", nombre:"Arián", texto:"Súper el servicio de Tech Shop.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p7388", nombre:"Victor", texto:"Un servicio confiable.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p1939", nombre:"Daylin", texto:"Gracias por su servicio, muy atento a la hora de atender sus clientes. Un placer trabajar con usted.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p8377", nombre:"Cliente", texto:"Muy contenta con los servicios. Llevo años y nunca he tenido problemas. Muchas gracias.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p7701", nombre:"Nestor Pérez A", texto:"Muchísimas gracias por el servicio. Continúa así; serás un gran emprendedor.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p8244", nombre:"Cliente", texto:"Excelente servicio. Súper rápido, confiable. Recomendado.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p3808", nombre:"Carlos", texto:"Excelente servicio y rápido.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p5492", nombre:"Lucia", texto:"Excelente servicio, muy confiable. Gracias.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p1701", nombre:"Zekke", texto:"Servicio confiable. Agradecido con la atención del admin. Gracias.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p3350", nombre:"Fra Fra", texto:"Muy buen servicio, rápido. Lo recomiendo.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p2079", nombre:"Sr. Williams", texto:"Buen trabajo, súper rápido.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p4930", nombre:"Cliente", texto:"Muy buen servicio, lo recomiendo.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p2888", nombre:"Yanoi", texto:"Todo perfecto con Tech Shop. Excelente.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p5929", nombre:"L3³∅ Rød®|¢£¢§", texto:"Excelente servicio. Gracias, ya tengo mi propio número. Bendiciones para ti y tu familia.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p4342", nombre:"Reyna", texto:"Súper la atención, muy buena.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p9727", nombre:"Eduareh SpaceHunters Kat Knight", texto:"Excelente servicio. Excelentes ofertas. 5/5.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p1612", nombre:"Javier Ojeda", texto:"Muchas gracias, ya tengo mi número para Telegram.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p2257", nombre:"Yoendry", texto:"Súper confiable con los números virtuales.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p7788", nombre:"Ihosva", texto:"Es un placer adquirir servicios con Tech Shop: rápido y seguro.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p1922", nombre:"Carlos Manuel Portales Chacón", texto:"Total seguridad y confianza.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p4362", nombre:"Yoendry", texto:"Excelente servicio, súper serio.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p3477", nombre:"Cliente", texto:"Excelente servicio, mucha seguridad y confianza.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p9656", nombre:"Cliente", texto:"Segundo trabajo y como siempre excelente. Lo mejor.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p1228", nombre:"MR", texto:"Muy complacido con la atención. Gracias, pude conseguir mi número virtual. Servicio de excelencia.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p1811", nombre:"Cliente", texto:"Muy buen servicio. Tech Shop brinda el mejor servicio.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p9827", nombre:"Manu", texto:"Muy contento con los servicios: calidad y rapidez aseguradas.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p7756", nombre:"Spotify", texto:"Muy contento con los servicios. Muchas gracias.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+{ _id:"p9555", nombre:"Netflix", texto:"Espectacular servicio: calidad y rapidez. Muchas gracias.", estrellas:5, fecha: Date.now(), estado:"pendiente" },
+
+];
+
+// Inyectar pendientes iniciales si no existen
+function seedPendingIfEmpty(){
+  const p = JSON.parse(localStorage.getItem("techshop_refs_pending_v3") || "[]");
+  if(p.length === 0){
+    localStorage.setItem("techshop_refs_pending_v3", JSON.stringify(SEED_PENDING));
+  }
+}
+
+ensureSeed();
+seedPendingIfEmpty();
   bind();
   initWhatsApp();
   /* FIREBASE LOAD */
@@ -710,11 +1123,49 @@ if (window.FB_READY) {
       const refs=[];
       snap.forEach(d=>refs.push({_id:d.id,...d.data()}));
       if(refs.length){
-        localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(refs));
-        renderPublic();
+        
+// FUSIONAR LOCAL + FIREBASE (sin duplicados)
+let localApproved = JSON.parse(localStorage.getItem("techshop_refs_approved_v3") || "[]");
+
+refs.forEach(fb => {
+  const exists = localApproved.some(l =>
+    l.nombre.trim().toLowerCase() === fb.nombre.trim().toLowerCase() &&
+    l.texto.trim().toLowerCase() === fb.texto.trim().toLowerCase()
+  );
+  if (!exists) localApproved.push(fb);
+});
+
+localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(localApproved));
+renderPublic();
+
+        
+// ADMIN OCULTO (5 toques en logo)
+let taps=0;
+document.querySelector(".logo-glass").addEventListener("click",()=>{
+  taps++;
+  if(taps>=5){
+    document.getElementById("adminModal").classList.add("open");
+    taps=0;
+  }
+  setTimeout(()=>taps=0,1500);
+});
+
+renderPublic();
       }
     });
 }
+
+// ADMIN OCULTO (5 toques en logo)
+let taps=0;
+document.querySelector(".logo-glass").addEventListener("click",()=>{
+  taps++;
+  if(taps>=5){
+    document.getElementById("adminModal").classList.add("open");
+    taps=0;
+  }
+  setTimeout(()=>taps=0,1500);
+});
+
 renderPublic();
 })();
 </script>
