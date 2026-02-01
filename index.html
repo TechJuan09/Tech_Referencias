@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Referencias | Tech Shop</title>
+<style>
+
+:root{
+  --bg:#0b1220;
+  --panel:#0f1a33;
+  --border:#243255;
+  --text:#e9f0ff;
+  --muted:#a9b7d0;
+  --accent:#4ea1ff;
+  --ok:#31d07f;
+  --new:#7cc4ff;
+}
+
+body{
+  margin:0;
+  font-family:Arial,system-ui;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* ===== MARCO DE LUCES SIMPLE ===== */
+.light-frame{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:100;
+}
+.light-frame::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  padding:3px; /* grosor de la línea */
+  border-radius:0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #ff5a5a 0 8px,
+      #ffd95a 8px 16px,
+      #5affb0 16px 24px,
+      #5ac8ff 24px 32px,
+      #c88cff 32px 40px
+    );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  animation: frameGlow 2.8s ease-in-out infinite;
+  opacity:.85;
+}
+@keyframes frameGlow{
+  0%,100%{filter:brightness(.9)}
+  50%{filter:brightness(1.3)}
+}
+
+.wrap{max-width:980px;margin:auto;padding:20px;position:relative}
+
+/* Animación */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(12px);animation:fadeUp .6s ease forwards}
+
+/* HERO */
+.hero{
+  position:relative;
+  padding:30px 22px 40px;
+  border-radius:18px;
+  border:1px solid var(--border);
+  overflow:hidden;
+  text-align:center;
+  background:
+    linear-gradient(rgba(11,18,32,.82),rgba(11,18,32,.88)),
+    url("banner-techshop.png") center/cover no-repeat;
+}
+
+.logo-center{display:flex;justify-content:center;margin-bottom:6px}
+
+.logo-glass{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px 28px;
+  border-radius:28px;
+  border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.09);
+  backdrop-filter:blur(14px);
+  box-shadow:0 26px 60px rgba(0,0,0,.4);
+  max-width:520px;
+  margin:auto;
+  overflow:hidden;
+}
+
+@keyframes shine{0%{transform:translateX(-140%) rotate(12deg)}100%{transform:translateX(140%) rotate(12deg)}}
+.logo-glass::after{
+  content:"";
+  position:absolute;
+  top:-35%;left:-60%;
+  width:60%;height:180%;
+  background:linear-gradient(115deg,transparent,rgba(255,255,255,.22),transparent);
+  animation:shine 3.2s ease-in-out infinite;
+}
+
+.logo-center img{
+  width:100%;
+  max-width:420px;
+  border-radius:20px;
+  filter:drop-shadow(0 8px 26px rgba(0,0,0,.6));
+}
+
+.hero-text p{
+  margin:0 auto 14px;
+  max-width:720px;
+  color:#d6e6ff;
+  font-size:14px;
+}
+
+/* Botones */
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.pill{display:inline-flex;gap:8px;align-items:center;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);padding:8px 12px;border-radius:999px;font-size:12px}
+.dot{width:8px;height:8px;border-radius:999px;background:var(--ok);animation:pulse 1.5s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(49,208,127,.3)}70%{box-shadow:0 0 0 10px rgba(49,208,127,0)}100%{box-shadow:0 0 0 0 rgba(49,208,127,0)}}
+.btn{background:var(--accent);color:#081120;padding:10px 14px;border-radius:12px;text-decoration:none;font-weight:bold;border:0;cursor:pointer}
+.btn.secondary{background:transparent;color:var(--text);border:1px solid var(--border)}
+
+.card{margin-top:16px;border:1px solid var(--border);background:var(--panel);padding:16px;border-radius:18px}
+input{width:100%;max-width:520px;padding:10px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text)}
+
+.ref{border-bottom:1px solid var(--border);padding:14px 0}
+.ref.new{border-left:3px solid var(--new);padding-left:12px;background:linear-gradient(90deg,rgba(124,196,255,.10),transparent 55%);border-radius:12px}
+.badge{font-size:11px;padding:3px 10px;border-radius:999px;border:1px solid rgba(124,196,255,.7);background:rgba(124,196,255,.12);margin-left:8px}
+
+footer{margin-top:14px;font-size:12px;color:var(--muted)}
+
+/* WhatsApp selector */
+.wa-widget{position:fixed;right:16px;bottom:16px;z-index:60}
+.wa-float{width:54px;height:54px;border-radius:999px;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 16px 40px rgba(0,0,0,.45);border:0;cursor:pointer}
+.wa-float svg{width:28px;height:28px;fill:#0b1220}
+.wa-menu{position:absolute;right:0;bottom:66px;display:flex;flex-direction:column;gap:8px;padding:10px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(15,26,51,.92);backdrop-filter:blur(10px);opacity:0;transform:translateY(10px) scale(.98);pointer-events:none;transition:.18s}
+.wa-menu.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+.wa-item{color:var(--text);text-decoration:none;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.06);font-weight:700;font-size:13px}
+
+@media(max-width:520px){
+  .hero{padding:24px 14px 28px}
+  .logo-center img{max-width:260px}
+}
+
+
+/* ===== Cards / form fields (compat) ===== */
+.card{margin-top:16px;border:1px solid var(--border);background:var(--panel);padding:16px;border-radius:18px}
+.grid{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:820px){.grid{grid-template-columns:1fr 1fr}}
+textarea{width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);min-height:110px;resize:vertical}
+select{width:100%;padding:10px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row > *{flex:1}
+.row .tight{flex:0}
+.btn.bad{background:#ff5a5a;color:#12060a}
+.stars{color:#ffd700;margin:4px 0;font-size:13px}
+
+/* Admin modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:999}
+.modal.open{display:flex}
+.panel{width:min(980px,92vw);max-height:88vh;overflow:auto;background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:16px}
+.kv{display:flex;gap:10px;flex-wrap:wrap}
+.kv .box{border:1px solid var(--border);border-radius:14px;padding:10px 12px;background:rgba(255,255,255,.04)}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:rgba(15,26,51,.96);border:1px solid rgba(255,255,255,.14);
+  padding:10px 12px;border-radius:14px;display:none;z-index:1000}
+.toast.show{display:block}
+
+</style>
+
+<!-- FIREBASE COMPAT -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAvJr3Hg7Rzzur23ZIVMbuim8lkTxEUV10",
+  authDomain: "tech-shop-c72f4.firebaseapp.com",
+  projectId: "tech-shop-c72f4"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+window.FB_READY = true;
+</script>
+
+</head>
+
+<body>
+<div class="light-frame"></div>
+
+<!-- WhatsApp selector (igual al diseño original) -->
+<div class="wa-widget">
+  <button class="wa-float" id="waMainBtn" type="button" aria-label="WhatsApp">
+    <svg viewBox="0 0 32 32"><path d="M19.11 17.39c-.27-.14-1.6-.79-1.85-.88-.25-.09-.43-.14-.61.14-.18.27-.7.88-.86 1.06-.16.18-.31.2-.58.07-.27-.14-1.14-.42-2.17-1.34-.8-.71-1.34-1.58-1.5-1.85-.16-.27-.02-.42.12-.56.12-.12.27-.31.41-.47.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.47-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.46h-.52c-.18 0-.47.07-.71.34-.25.27-.93.91-.93 2.23s.95 2.59 1.08 2.77c.14.18 1.87 2.85 4.54 4 .64.28 1.14.45 1.53.58.64.2 1.22.17 1.68.1.51-.08 1.6-.65 1.83-1.27.23-.62.23-1.15.16-1.27-.07-.12-.25-.2-.52-.34z"/></svg>
+  </button>
+  <div class="wa-menu" id="waMenu">
+    <a class="wa-item" id="waNormal" target="_blank" rel="noopener">WhatsApp</a>
+    <a class="wa-item" id="waBusiness" rel="noopener">WhatsApp Business</a>
+  </div>
+</div>
+
+<div class="wrap">
+
+<header class="hero reveal">
+  <div class="logo-center"><div class="logo-glass">
+    <img src="https://raw.githubusercontent.com/TechJuan09/TechReferencias/refs/heads/main/Tech.png" alt="Tech Shop">
+  </div></div>
+  <div class="hero-text"><p>Tu opinión es importante. Cada referencia ayuda a otros a confiar.</p></div>
+  <div class="hero-actions">
+    <span class="pill"><span class="dot"></span>Disponible 24/7</span>
+    <span class="pill" id="countPill">Cargando…</span>
+    <button class="btn" id="openFormBtn" type="button">Dejar referencia</button>
+    <button class="btn secondary" id="openAdminBtn" type="button">Admin (Aprobar)</button>
+  </div>
+</header>
+
+<!-- FORM -->
+<section class="card reveal" id="formCard" style="display:none">
+  <div class="row">
+    <div>
+      <h3 style="margin:0 0 8px">Enviar referencia</h3>
+      <small>Se enviará como <b>pendiente</b> hasta que el admin la apruebe.</small>
+    </div>
+    <div class="tight">
+      <button class="btn secondary" id="closeFormBtn" type="button">Cerrar</button>
+    </div>
+  </div>
+  <div class="grid" style="margin-top:10px">
+    <div>
+      <label><small>Nombre</small></label>
+      <input id="refName" placeholder="Tu nombre" autocomplete="name" />
+    </div>
+    <div>
+      <label><small>Estrellas</small></label>
+      <select id="refStars">
+        <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+        <option value="4">⭐⭐⭐⭐ (4)</option>
+        <option value="3">⭐⭐⭐ (3)</option>
+        <option value="2">⭐⭐ (2)</option>
+        <option value="1">⭐ (1)</option>
+      </select>
+    </div>
+    <div style="grid-column:1/-1">
+      <label><small>Referencia</small></label>
+      <textarea id="refText" placeholder="Escribe tu referencia..."></textarea>
+    </div>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <button class="btn" id="sendBtn" type="button">Enviar referencia</button>
+    <small id="sendHint" style="text-align:right">Modo: <b id="modeLabel">Local (estable)</b></small>
+  </div>
+</section>
+
+<!-- LIST -->
+<section class="card reveal">
+  <input id="search" placeholder="Buscar referencia..." />
+  <div id="list" style="margin-top:10px"></div>
+  <div class="row" style="margin-top:10px">
+    <div class="tight"><button class="btn secondary" id="moreBtn" style="display:none" type="button">Ver más</button></div>
+    <div class="tight"><button class="btn secondary" id="refreshBtn" type="button">Actualizar</button></div>
+  </div>
+</section>
+
+<footer>
+Tienda: <a href="https://mundo-digital.biznecubano.com" target="_blank" rel="noopener">mundo-digital.biznecubano.com</a><br>
+WhatsApp Business: <strong>+53 54842473</strong>
+</footer>
+
+</div>
+
+<!-- ADMIN MODAL -->
+<div class="modal" id="adminModal" aria-hidden="true">
+  <div class="panel">
+    <div class="row">
+      <div>
+        <h3 style="margin:0 0 6px">Panel Admin — Aprobación</h3>
+        <small>Las referencias pendientes se aprueban aquí (PIN).</small>
+      </div>
+      <div class="tight">
+        <button class="btn secondary" id="closeAdminBtn" type="button">Cerrar</button>
+      </div>
+    </div>
+
+    <hr style="border:0;border-top:1px solid var(--border);margin:14px 0">
+
+    <div class="card" style="margin:0 0 14px">
+      <div class="row">
+        <div>
+          <label><small>PIN Admin (cámbialo en el código)</small></label>
+          <input id="pinInput" placeholder="Escribe tu PIN" type="password" inputmode="numeric" />
+        </div>
+        <div class="tight">
+          <button class="btn" id="unlockBtn" type="button">Entrar</button>
+        </div>
+      </div>
+      <small id="lockInfo">Estado: <b>Bloqueado</b></small>
+    </div>
+
+    <div id="adminContent" style="display:none">
+      <div class="kv">
+        <div class="box"><b id="kPending">0</b><div><small>Pendientes</small></div></div>
+        <div class="box"><b id="kApproved">0</b><div><small>Aprobadas</small></div></div>
+      </div>
+
+      <hr style="border:0;border-top:1px solid var(--border);margin:14px 0">
+
+      <div class="row">
+        <button class="btn secondary" id="exportBtn" type="button">Exportar JSON</button>
+        <button class="btn secondary" id="importBtn" type="button">Importar JSON</button>
+        <button class="btn bad" id="wipeBtn" type="button">Borrar TODO (local)</button>
+      </div>
+      <small>Export/Import te permite pasar datos entre dispositivos.</small>
+
+      <hr style="border:0;border-top:1px solid var(--border);margin:14px 0">
+
+      <h4 style="margin:0 0 8px">Pendientes</h4>
+      <div id="pendingList"></div>
+
+      <hr style="border:0;border-top:1px solid var(--border);margin:14px 0">
+
+      <h4 style="margin:0 0 8px">Aprobadas</h4>
+      <div id="approvedList"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  "use strict";
+
+  const ADMIN_PIN = "2026"; // 🔐 CAMBIA ESTE PIN
+  const LS_KEYS = {
+    pending: "techshop_refs_pending_v3",
+    approved: "techshop_refs_approved_v3"
+  };
+
+  // Referencias iniciales (ya visibles)
+  const SEED_APPROVED = [
+    { _id:"a1", nombre:"Ivan", texto:"Rapidez, calidad, seriedad, profesionalidad y sobre todo confiabilidad en el servicio que prestan.", estrellas:5, fecha: Date.now()-1000*60*60*24*20, estado:"aprobado" },
+    { _id:"a2", nombre:"Liset", texto:"Muy buen servicio, confiable y rápido, muy recomendado.", estrellas:5, fecha: Date.now()-1000*60*60*24*18, estado:"aprobado" },
+    { _id:"a3", nombre:"Arián", texto:"Súper el servicio de Tech Shop.", estrellas:5, fecha: Date.now()-1000*60*60*24*17, estado:"aprobado" },
+    { _id:"a4", nombre:"Victor", texto:"Un servicio confiable.", estrellas:5, fecha: Date.now()-1000*60*60*24*16, estado:"aprobado" },
+    { _id:"a5", nombre:"Daylin", texto:"Gracias por su servicio, muy atento a la hora de atender sus clientes. Un placer trabajar con usted.", estrellas:5, fecha: Date.now()-1000*60*60*24*15, estado:"aprobado" },
+    { _id:"a6", nombre:"Cliente", texto:"Muy contenta con los servicios. Llevo años y nunca he tenido problemas. Muchas gracias.", estrellas:5, fecha: Date.now()-1000*60*60*24*14, estado:"aprobado" },
+    { _id:"a7", nombre:"Nestor Pérez A", texto:"Muchísimas gracias por el servicio. Continúa así; serás un gran emprendedor.", estrellas:5, fecha: Date.now()-1000*60*60*24*13, estado:"aprobado" },
+    { _id:"a8", nombre:"Carlos", texto:"Excelente servicio y rápido.", estrellas:5, fecha: Date.now()-1000*60*60*24*12, estado:"aprobado" },
+    { _id:"a9", nombre:"Lucia", texto:"Excelente servicio, muy confiable. Gracias.", estrellas:5, fecha: Date.now()-1000*60*60*24*11, estado:"aprobado" },
+    { _id:"a10", nombre:"Zekke", texto:"Servicio confiable. Agradecido con la atención del admin. Gracias.", estrellas:5, fecha: Date.now()-1000*60*60*24*10, estado:"aprobado" },
+    { _id:"a11", nombre:"Fra Fra", texto:"Muy buen servicio, rápido. Lo recomiendo.", estrellas:5, fecha: Date.now()-1000*60*60*24*9, estado:"aprobado" },
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? "")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  const clampStars = (n)=>Math.max(1, Math.min(5, Number(n)||5));
+  const stars = (n)=>"⭐".repeat(clampStars(n));
+  const toast = (msg)=>{ const t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"), 2200); };
+
+  const loadJSON = (key, fallback)=>{
+    try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+    catch{ return fallback; }
+  };
+  const saveJSON = (key, value)=> localStorage.setItem(key, JSON.stringify(value));
+
+  function ensureSeed(){
+    const approved = loadJSON(LS_KEYS.approved, null);
+    if(!Array.isArray(approved) || approved.length===0) saveJSON(LS_KEYS.approved, SEED_APPROVED);
+    const pending = loadJSON(LS_KEYS.pending, null);
+    if(!Array.isArray(pending)) saveJSON(LS_KEYS.pending, []);
+  }
+
+  function getApproved(){ return loadJSON(LS_KEYS.approved, []).slice().sort((a,b)=>(b.fecha||0)-(a.fecha||0)); }
+  function getPending(){ return loadJSON(LS_KEYS.pending, []).slice().sort((a,b)=>(b.fecha||0)-(a.fecha||0)); }
+  function setApproved(arr){ saveJSON(LS_KEYS.approved, arr); }
+  function setPending(arr){ saveJSON(LS_KEYS.pending, arr); }
+
+  let visible = 10;
+  let unlocked = false;
+
+  function renderPublic(){
+    const q = ($("search").value||"").toLowerCase().trim();
+    const all = getApproved();
+    const filtered = all.filter(r => ((r.nombre||"")+" "+(r.texto||"")).toLowerCase().includes(q));
+
+    $("countPill").textContent = `${filtered.length} referencias`;
+    $("moreBtn").style.display = filtered.length > visible ? "inline-block" : "none";
+
+    const newestIds = new Set(all.slice(0,5).map(r=>r._id));
+    $("list").innerHTML = filtered.slice(0,visible).map(r=>`
+      <div class="ref ${newestIds.has(r._id) ? "new" : ""}">
+        <div><b>${esc(r.nombre||"Cliente")}</b>${newestIds.has(r._id)?'<span class="badge">NUEVO</span>':''}</div>
+        <div class="stars">${stars(r.estrellas)}</div>
+        <div>${esc(r.texto||"")}</div>
+      </div>
+    `).join("") || "<small>Sin resultados.</small>";
+  }
+
+  function renderAdmin(){
+    if(!unlocked) return;
+    const pending = getPending();
+    const approved = getApproved();
+    $("kPending").textContent = pending.length;
+    $("kApproved").textContent = approved.length;
+
+    $("pendingList").innerHTML = pending.map(r=>`
+      <div class="ref">
+        <div><b>${esc(r.nombre)}</b><span class="badge" style="border-color:rgba(255,179,0,.7);background:rgba(255,179,0,.12)">PENDIENTE</span></div>
+        <div class="stars">${stars(r.estrellas)}</div>
+        <div>${esc(r.texto)}</div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn" type="button" data-approve="${esc(r._id)}">Aprobar</button>
+          <button class="btn secondary" type="button" data-reject="${esc(r._id)}">Eliminar</button>
+        </div>
+      </div>
+    `).join("") || "<small>No hay pendientes.</small>";
+
+    $("approvedList").innerHTML = approved.slice(0,30).map(r=>`
+      <div class="ref">
+        <div><b>${esc(r.nombre)}</b><span class="badge">APROBADO</span></div>
+        <div class="stars">${stars(r.estrellas)}</div>
+        <div>${esc(r.texto)}</div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn secondary" type="button" data-remove="${esc(r._id)}">Quitar</button>
+        </div>
+      </div>
+    `).join("") || "<small>No hay aprobadas.</small>";
+  }
+
+  function addPending(ref){ const p=getPending(); p.unshift(ref); setPending(p); }
+
+  function approveOne(id){
+    const pending = getPending();
+    const idx = pending.findIndex(r=>r._id===id);
+    if(idx<0) return;
+    const ref = pending.splice(idx,1)[0];
+    ref.estado="aprobado";
+if(window.FB_READY){
+  db.collection("referencias").doc(id).update({estado:"aprobado"});
+}
+    const approved = getApproved();
+    approved.unshift(ref);
+    setPending(pending);
+    setApproved(approved);
+    toast("Aprobado ✅");
+    renderAdmin();
+    /* FIREBASE LOAD */
+if (window.FB_READY) {
+  db.collection("referencias")
+    .where("estado","==","aprobado")
+    .onSnapshot(snap=>{
+      const refs=[];
+      snap.forEach(d=>refs.push({_id:d.id,...d.data()}));
+      if(refs.length){
+        localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(refs));
+        renderPublic();
+      }
+    });
+}
+renderPublic();
+  }
+
+  function rejectOne(id){
+    setPending(getPending().filter(r=>r._id!==id));
+    toast("Eliminado");
+    renderAdmin();
+  }
+
+  function removeApproved(id){
+    setApproved(getApproved().filter(r=>r._id!==id));
+    toast("Quitado");
+    renderAdmin();
+    /* FIREBASE LOAD */
+if (window.FB_READY) {
+  db.collection("referencias")
+    .where("estado","==","aprobado")
+    .onSnapshot(snap=>{
+      const refs=[];
+      snap.forEach(d=>refs.push({_id:d.id,...d.data()}));
+      if(refs.length){
+        localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(refs));
+        renderPublic();
+      }
+    });
+}
+renderPublic();
+  }
+
+  // UI actions
+  function openForm(){ $("formCard").style.display="block"; window.scrollTo({top:$("formCard").offsetTop-10, behavior:"smooth"}); }
+  function closeForm(){ $("formCard").style.display="none"; }
+  function openAdmin(){ $("adminModal").classList.add("open"); $("adminModal").setAttribute("aria-hidden","false"); renderAdmin(); }
+  function closeAdmin(){ $("adminModal").classList.remove("open"); $("adminModal").setAttribute("aria-hidden","true"); }
+
+  function bind(){
+    $("openFormBtn").addEventListener("click", openForm);
+    $("closeFormBtn").addEventListener("click", closeForm);
+
+    $("openAdminBtn").addEventListener("click", openAdmin);
+    $("closeAdminBtn").addEventListener("click", closeAdmin);
+    $("adminModal").addEventListener("click",(e)=>{ if(e.target.id==="adminModal") closeAdmin(); });
+
+    $("search").addEventListener("input", ()=>{ visible=10; /* FIREBASE LOAD */
+if (window.FB_READY) {
+  db.collection("referencias")
+    .where("estado","==","aprobado")
+    .onSnapshot(snap=>{
+      const refs=[];
+      snap.forEach(d=>refs.push({_id:d.id,...d.data()}));
+      if(refs.length){
+        localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(refs));
+        renderPublic();
+      }
+    });
+}
+renderPublic(); });
+    $("moreBtn").addEventListener("click", ()=>{ visible+=10; /* FIREBASE LOAD */
+if (window.FB_READY) {
+  db.collection("referencias")
+    .where("estado","==","aprobado")
+    .onSnapshot(snap=>{
+      const refs=[];
+      snap.forEach(d=>refs.push({_id:d.id,...d.data()}));
+      if(refs.length){
+        localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(refs));
+        renderPublic();
+      }
+    });
+}
+renderPublic(); });
+    $("refreshBtn").addEventListener("click", ()=>{ ensureSeed(); visible=10; /* FIREBASE LOAD */
+if (window.FB_READY) {
+  db.collection("referencias")
+    .where("estado","==","aprobado")
+    .onSnapshot(snap=>{
+      const refs=[];
+      snap.forEach(d=>refs.push({_id:d.id,...d.data()}));
+      if(refs.length){
+        localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(refs));
+        renderPublic();
+      }
+    });
+}
+renderPublic(); toast("Actualizado"); });
+
+    $("unlockBtn").addEventListener("click", ()=>{
+      const pin = ($("pinInput").value||"").trim();
+      if(pin !== ADMIN_PIN){ toast("PIN incorrecto"); return; }
+      unlocked = true;
+      $("lockInfo").innerHTML = 'Estado: <b style="color:var(--ok)">Desbloqueado</b>';
+      $("adminContent").style.display="block";
+      renderAdmin();
+    });
+
+    $("sendBtn").addEventListener("click", ()=>{
+      const nombre = ($("refName").value||"").trim();
+      const texto = ($("refText").value||"").trim();
+      const estrellas = clampStars($("refStars").value||5);
+      if(!nombre || !texto){ toast("Completa nombre y referencia"); return; }
+
+      const ref = { _id: "p_"+Date.now()+"_"+Math.random().toString(16).slice(2), nombre, texto, estrellas, estado:"pendiente", fecha: Date.now() };
+      addPending(ref);
+if(window.FB_READY){
+  db.collection("referencias").add({
+    nombre: ref.nombre,
+    texto: ref.texto,
+    estrellas: ref.estrellas,
+    estado: "pendiente",
+    fecha: firebase.firestore.FieldValue.serverTimestamp()
+  });
+}
+      $("refName").value=""; $("refText").value=""; $("refStars").value="5";
+      closeForm();
+      toast("Enviada para aprobación ✅");
+      if($("adminModal").classList.contains("open")) renderAdmin();
+    });
+
+    $("pendingList").addEventListener("click",(e)=>{
+      const a = e.target?.getAttribute?.("data-approve");
+      const r = e.target?.getAttribute?.("data-reject");
+      if(a) approveOne(a);
+      if(r) rejectOne(r);
+    });
+    $("approvedList").addEventListener("click",(e)=>{
+      const id = e.target?.getAttribute?.("data-remove");
+      if(id) removeApproved(id);
+    });
+
+    $("exportBtn").addEventListener("click", ()=>{
+      if(!unlocked) return;
+      const payload = { pending: getPending(), approved: getApproved(), exportedAt: new Date().toISOString() };
+      const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "techshop-referencias.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+      toast("Exportado");
+    });
+
+    $("importBtn").addEventListener("click", ()=>{
+      if(!unlocked) return;
+      const inp = document.createElement("input");
+      inp.type="file"; inp.accept="application/json";
+      inp.onchange = async ()=>{
+        const f = inp.files?.[0]; if(!f) return;
+        try{
+          const data = JSON.parse(await f.text());
+          if(Array.isArray(data.pending)) setPending(data.pending);
+          if(Array.isArray(data.approved)) setApproved(data.approved);
+          toast("Importado ✅");
+          renderAdmin(); /* FIREBASE LOAD */
+if (window.FB_READY) {
+  db.collection("referencias")
+    .where("estado","==","aprobado")
+    .onSnapshot(snap=>{
+      const refs=[];
+      snap.forEach(d=>refs.push({_id:d.id,...d.data()}));
+      if(refs.length){
+        localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(refs));
+        renderPublic();
+      }
+    });
+}
+renderPublic();
+        }catch{ toast("JSON inválido"); }
+      };
+      inp.click();
+    });
+
+    $("wipeBtn").addEventListener("click", ()=>{
+      if(!unlocked) return;
+      if(!confirm("¿Seguro? Esto borra TODAS las referencias locales.")) return;
+      setPending([]); setApproved([]);
+      toast("Borrado");
+      renderAdmin(); /* FIREBASE LOAD */
+if (window.FB_READY) {
+  db.collection("referencias")
+    .where("estado","==","aprobado")
+    .onSnapshot(snap=>{
+      const refs=[];
+      snap.forEach(d=>refs.push({_id:d.id,...d.data()}));
+      if(refs.length){
+        localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(refs));
+        renderPublic();
+      }
+    });
+}
+renderPublic();
+    });
+
+    window.addEventListener("storage",(e)=>{
+      if([LS_KEYS.pending, LS_KEYS.approved].includes(e.key)){
+        /* FIREBASE LOAD */
+if (window.FB_READY) {
+  db.collection("referencias")
+    .where("estado","==","aprobado")
+    .onSnapshot(snap=>{
+      const refs=[];
+      snap.forEach(d=>refs.push({_id:d.id,...d.data()}));
+      if(refs.length){
+        localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(refs));
+        renderPublic();
+      }
+    });
+}
+renderPublic();
+        if($("adminModal").classList.contains("open")) renderAdmin();
+      }
+    });
+  }
+
+  // WhatsApp selector
+  function initWhatsApp(){
+    const waMainBtn = document.getElementById("waMainBtn");
+    const waMenu = document.getElementById("waMenu");
+    const waNormal = document.getElementById("waNormal");
+    const waBusiness = document.getElementById("waBusiness");
+
+    waNormal.href = "https://wa.me/5354842473?text=Hola%20Tech%20Shop";
+    waMainBtn.onclick = (e)=>{ e.stopPropagation(); waMenu.classList.toggle("open"); };
+    document.addEventListener("click", ()=>waMenu.classList.remove("open"));
+    waBusiness.onclick = ()=>{
+      if(/Android/i.test(navigator.userAgent)){
+        location.href = "intent://send?phone=5354842473#Intent;scheme=whatsapp;package=com.whatsapp.w4b;end";
+        setTimeout(()=>location.href=waNormal.href, 900);
+      } else {
+        window.open(waNormal.href, "_blank");
+      }
+    };
+  }
+
+  ensureSeed();
+  bind();
+  initWhatsApp();
+  /* FIREBASE LOAD */
+if (window.FB_READY) {
+  db.collection("referencias")
+    .where("estado","==","aprobado")
+    .onSnapshot(snap=>{
+      const refs=[];
+      snap.forEach(d=>refs.push({_id:d.id,...d.data()}));
+      if(refs.length){
+        localStorage.setItem("techshop_refs_approved_v3", JSON.stringify(refs));
+        renderPublic();
+      }
+    });
+}
+renderPublic();
+})();
+</script>
+</body>
+</html>
