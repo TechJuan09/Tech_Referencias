@@ -746,10 +746,11 @@ const SEED_PENDING = [
 
 // Inyectar pendientes iniciales si no existen
 function seedPendingIfEmpty(){
-  const p = JSON.parse(localStorage.getItem("techshop_refs_pending_v3") || "[]");
-  if(p.length === 0){
-    localStorage.setItem("techshop_refs_pending_v3", JSON.stringify(SEED_PENDING));
-  }
+  const alreadySeeded = localStorage.getItem("techshop_seed_done");
+  if(alreadySeeded) return;
+
+  localStorage.setItem("techshop_refs_pending_v3", JSON.stringify(SEED_PENDING));
+  localStorage.setItem("techshop_seed_done", "yes");
 }
 
 ensureSeed();
@@ -1105,10 +1106,11 @@ const SEED_PENDING = [
 
 // Inyectar pendientes iniciales si no existen
 function seedPendingIfEmpty(){
-  const p = JSON.parse(localStorage.getItem("techshop_refs_pending_v3") || "[]");
-  if(p.length === 0){
-    localStorage.setItem("techshop_refs_pending_v3", JSON.stringify(SEED_PENDING));
-  }
+  const alreadySeeded = localStorage.getItem("techshop_seed_done");
+  if(alreadySeeded) return;
+
+  localStorage.setItem("techshop_refs_pending_v3", JSON.stringify(SEED_PENDING));
+  localStorage.setItem("techshop_seed_done", "yes");
 }
 
 ensureSeed();
